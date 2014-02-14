@@ -9,9 +9,11 @@ The --phantomcss option will name files for use with PhantomCSS for visual regre
 
 1. Edit client.py and enter your Browserstack username and API token
 2. Create a config file for the device/os/browser combinations you wish to screenshot. See example_config/ for examples.
-3. python client.py
+3. Start the browserstack job and download baseline screenshots: python client.py --config <config file>
+4. Run client.py a second time, this will produce the screenshots you want to test
+5. Test for visual regressions between the two sets: casperjs test comparator.js
 
-### Params
+### client.py params
 -c, --config <config file>
 
 -p, --phantomcss    use phantomcss file naming conventions
