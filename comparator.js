@@ -7,7 +7,7 @@ var phantomcss = require('./../PhantomCSS/phantomcss.js');
 phantomcss.init({
 	screenshotRoot: './output-phantomcss',
 	failedComparisonsRoot: './failures',
-	libraryRoot: './../PhantomCSS/',
+	libraryRoot: './PhantomCSS/',
 	mismatchTolerance: 1.5, // ignore failures below this mismatch % threshold
 	addLabelToFailedImage: false
 });
