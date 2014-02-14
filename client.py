@@ -184,10 +184,14 @@ def main(argv):
     config_file = ''
 
     """ Do not edit below this line """
+
+    def usage():
+        print 'Usage:\n-c, --config <config_file>\n-p, --phantomcss'
+
     try:
         opts, args = getopt.getopt(argv, "c:p", ["config=", "phantomcss"])
     except getopt.GetoptError:
-        #usage()
+        usage()
         sys.exit(2)
 
     for opt, arg in opts:
