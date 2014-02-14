@@ -1,0 +1,164 @@
+{
+   "url":"http://www.google.com",
+   "quality": "compressed",
+   "orientation": "portrait",
+   "browsers":[
+      {
+         "os":"Windows",
+         "browser_version":"8.0",
+         "browser":"ie",
+         "os_version":"7"
+      },
+      {
+         "browser":"ie",
+         "browser_version":"11.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {
+         "browser":"ie",
+         "browser_version":"11.0 Desktop",
+         "os":"Windows",
+         "os_version":"8.1"
+      },
+      {
+         "browser":"ie",
+         "browser_version":"10.0 Desktop",
+         "os":"Windows",
+         "os_version":"8"
+      },
+      {
+         "browser":"ie",
+         "browser_version":"10.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {
+         "browser":"ie",
+         "browser_version":"9.0",
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {
+         "browser":"chrome",
+         "browser_version":"31.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Mavericks"
+      },
+      {
+         "browser":"chrome",
+         "browser_version":"30.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Mountain Lion"
+      },
+      {
+         "browser":"chrome",
+         "browser_version":"31.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {
+         "browser":"chrome",
+         "browser_version":"30.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"XP"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Mavericks"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"24.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Mavericks"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Mountain Lion"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"OS X",
+         "os_version":"Lion"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"8.1"
+      },
+      {
+         "browser":"chrome",
+         "browser_version":"24.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"8.1"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"8"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"24.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"8"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"25.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {
+         "browser":"firefox",
+         "browser_version":"24.0",
+         "device":null,
+         "os":"Windows",
+         "os_version":"7"
+      },
+      {  
+         "browser" : "opera",
+         "browser_version" : "12.15",
+         "device" : null,
+         "os" : "Windows",
+         "os_version" : "8"
+      },
+      { 
+         "browser" : "safari",
+         "browser_version" : "7.0",
+         "device" : null,
+         "os" : "OS X",
+         "os_version" : "Mavericks"
+      },
+      { 
+         "browser" : "safari",
+         "browser_version" : "6.1",
+         "device" : null,
+         "os" : "OS X",
+         "os_version" : "Mountain Lion"
+      }
+   ]
+}

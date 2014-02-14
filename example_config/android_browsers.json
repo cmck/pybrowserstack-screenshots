@@ -1,0 +1,49 @@
+{
+   "url":"http://www.google.com",
+   "wait_time": 60,
+   "browsers":[
+    { 
+      "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Samsung Galaxy S II",
+      "os" : "android",
+      "os_version" : "2.3"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Samsung Galaxy S III",
+      "os" : "android",
+      "os_version" : "4.1"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Samsung Galaxy Tab 2 10.1",
+      "os" : "android",
+      "os_version" : "4.0"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Samsung Galaxy Note II",
+      "os" : "android",
+      "os_version" : "4.1"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Samsung Galaxy Nexus",
+      "os" : "android",
+      "os_version" : "4.0"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "LG Nexus 4",
+      "os" : "android",
+      "os_version" : "4.2"
+    },
+      { "browser" : "Android Browser",
+      "browser_version" : null,
+      "device" : "Google Nexus 7",
+      "os" : "android",
+      "os_version" : "4.1"
+    }
+   ]
+}
