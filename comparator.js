@@ -2,7 +2,7 @@
 	Require and initialise PhantomCSS module
 	Paths are relative to CasperJs directory
 */
-var phantomcss = require('./../PhantomCSS/phantomcss.js');
+var phantomcss = require('./PhantomCSS/phantomcss.js');
 
 phantomcss.init({
 	screenshotRoot: './output-phantomcss',

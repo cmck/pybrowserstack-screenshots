@@ -29,10 +29,6 @@ class Screenshots(object):
         if kwargs.get('api_url'): 
             self.api_url = kwargs.get('api_url')
 
-        self.url = None
-        if kwargs.get('url'):
-            self.url = kwargs.get('url')
-
         self.config = self.DEFAULT_CONFIG
         if kwargs.get('config'):
             self.config = kwargs.get('config')
@@ -88,7 +84,7 @@ class Screenshots(object):
         """
         Return true if the screenshots job is done
         """
-        resp = self.session.get(os.path.join(self.api_url, jobid + '.json'))
+        resp = self.session.get(os.path.join(self.api_url, '{0}.json'.format(jobid)))
         resp = self._process_response(resp)
         return True if resp.json()['state'] == 'done' else False
 
@@ -96,7 +92,7 @@ class Screenshots(object):
         """
         Get the jobid JSON response if the screenshots job is done
         """
-        resp = self.session.get(os.path.join(self.api_url, jobid + '.json'))
+        resp = self.session.get(os.path.join(self.api_url, '{0}.json'.format(jobid)))
         resp = self._process_response(resp)
         return resp.json() if resp.json()['state'] == 'done' else False
 

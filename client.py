@@ -16,16 +16,9 @@ def _build_sliced_filepath(filename, slice_count):
     root = os.path.splitext(filename)[0]
     ext = os.path.splitext(filename)[1]
     new_filepath = ''.join( (root, str(slice_count), ext) )
+    return _build_filepath_for_phantomcss(new_filepath)
 
-    if _phantomcss:
-        return _build_filepath_for_phantomcss(new_filepath, slice_count)
-    else:
-        if os.path.exists(new_filepath):
-            print 'removing stale file {0}'.format(new_filepath)
-            os.remove(new_filepath)
-        return new_filepath
-
-def _build_filepath_for_phantomcss(filepath, slice_count):
+def _build_filepath_for_phantomcss(filepath):
     """ Prepare screenshot filename for use with phantomcss.
         ie, append 'diff' to the end of the file if a baseline exists """
     try: 
@@ -36,23 +29,20 @@ def _build_filepath_for_phantomcss(filepath, slice_count):
             if os.path.exists(diff_filepath):
                 print 'removing stale diff: {0}'.format(diff_filepath)
                 os.remove(diff_filepath)
-                return diff_filepath
-            else: 
-                return diff_filepath
+            return diff_filepath
         else:
             return filepath
     except Exception, e:
         print e
 
-def _build_filename_from_json(filepath, j):
+def _build_filename_from_browserstack_json(j):
     """ Build a useful filename for an image from the screenshot json metadata """
     filename = ''
     device = j['device'] if j['device'] else 'Desktop'
     if j['state'] == 'done' and j['image_url']:
         detail = [ device, j['os'], j['os_version'], 
-            j['browser'], j['browser_version'], '.jpg' ]
-        filename = os.path.join(filepath, \
-            '_'.join(item.replace(" ", "_") for item in detail if item))
+                j['browser'], j['browser_version'], '.jpg' ]
+        filename = '_'.join(item.replace(" ", "_") for item in detail if item)
     else:
         print 'screenshot timed out, ignoring this result'
     return filename
@@ -159,10 +149,11 @@ def get_screenshots(s, job_id):
             print 'Screenshot job complete. Saving files..'
             _purge(_output_dir, '.diff', 'stale diff')
             for i in screenshots_json['screenshots']:
-                base_image = _build_filename_from_json(_output_dir, i) 
+                base_image = os.path.join(_output_dir, \
+                    _build_filename_from_browserstack_json(i))
                 if base_image: 
                     _download_file(i['image_url'], base_image)
-                if os.path.isfile(base_image):
+                if os.path.isfile(base_image) and _phantomcss:
                     # slice the image. slicing on css selector could be better..
                     _long_image_slice(base_image, base_image, 300)
                     os.remove(base_image)
@@ -181,7 +172,6 @@ class ScreenshotIncompleteError(Exception):
 def main(argv):
     api_user = ''
     api_token = ''
-    config_file = ''
 
     """ Do not edit below this line """
 
@@ -194,6 +184,7 @@ def main(argv):
         usage()
         sys.exit(2)
 
+    config_file = ''
     for opt, arg in opts:
         if opt in ("-c", "--config"):
             config_file = arg
