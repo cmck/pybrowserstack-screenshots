@@ -1,38 +1,43 @@
-import math, os, sys, time, datetime, pickle, re, getopt
+""" Initiate jobs at Browserstack Screenshots and downloads the images when
+    they are complete. Optionally renames and slices images for use with
+    PhantomCSS visual regression testing tool """
+
+import math, os, sys, time, re, getopt
 from PIL import Image
 import requests
 import browserstack_screenshots
 
-try: 
+try:
     import simplejson as json
-except ImportError: 
+except ImportError:
     import json
 
 OUTPUT_DIR_PHANTOMCSS = './output-phantomcss'
-_output_dir = './output'
-_phantomcss = False
+output_dir = './output'
+phantomcss = False
 
 def _build_sliced_filepath(filename, slice_count):
+    """ append slice_count to the end of a filename """
     root = os.path.splitext(filename)[0]
     ext = os.path.splitext(filename)[1]
-    new_filepath = ''.join( (root, str(slice_count), ext) )
+    new_filepath = ''.join((root, str(slice_count), ext))
     return _build_filepath_for_phantomcss(new_filepath)
 
 def _build_filepath_for_phantomcss(filepath):
     """ Prepare screenshot filename for use with phantomcss.
         ie, append 'diff' to the end of the file if a baseline exists """
-    try: 
+    try:
         if os.path.exists(filepath):
-            new_root = '.'.join( (os.path.splitext(filepath)[0], 'diff') )
+            new_root = '.'.join((os.path.splitext(filepath)[0], 'diff'))
             ext = os.path.splitext(filepath)[1]
-            diff_filepath = ''.join( (new_root, ext) )
+            diff_filepath = ''.join((new_root, ext))
             if os.path.exists(diff_filepath):
                 print 'removing stale diff: {0}'.format(diff_filepath)
                 os.remove(diff_filepath)
             return diff_filepath
         else:
             return filepath
-    except Exception, e:
+    except OSError, e:
         print e
 
 def _build_filename_from_browserstack_json(j):
@@ -40,8 +45,8 @@ def _build_filename_from_browserstack_json(j):
     filename = ''
     device = j['device'] if j['device'] else 'Desktop'
     if j['state'] == 'done' and j['image_url']:
-        detail = [ device, j['os'], j['os_version'], 
-                j['browser'], j['browser_version'], '.jpg' ]
+        detail = [device, j['os'], j['os_version'],
+                j['browser'], j['browser_version'], '.jpg']
         filename = '_'.join(item.replace(" ", "_") for item in detail if item)
     else:
         print 'screenshot timed out, ignoring this result'
@@ -62,20 +67,20 @@ def _long_image_slice(in_filepath, out_filepath, slice_size):
         if count == slices:
             lower = height
         else:
-            lower = int(count * slice_size)  
-        # set the bounding box! The important bit     
+            lower = int(count * slice_size)
+        # set the bounding box! The important bit
         bbox = (left, upper, width, lower)
         working_slice = img.crop(bbox)
         upper += slice_size
         # save the slice
         new_filepath = _build_sliced_filepath(out_filepath, count)
         working_slice.save(new_filepath)
-        count +=1
+        count += 1
 
 def _read_json(path):
     try:
         with open(path) as f:
-              return json.load(f)
+            return json.load(f)
     except (EOFError, IOError), e:
         print e
         return {}
@@ -88,7 +93,7 @@ def _mkdir(path):
             raise
 
 def _download_file(uri, filename):
-    try: 
+    try:
         with open(filename, 'wb') as handle:
             request = requests.get(uri, stream=True)
             for block in request.iter_content(1024):
@@ -124,7 +129,7 @@ def retry(tries, delay=3, backoff=2):
 
             rv = f(*args, **kwargs) # first attempt
             while mtries > 0:
-                if rv is True: 
+                if rv is True:
                     return True
 
                 mtries -= 1
@@ -144,22 +149,22 @@ def retry_get_screenshots(s, job_id):
 def get_screenshots(s, job_id):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
-        _mkdir(_output_dir)
-        try: 
+        _mkdir(output_dir)
+        try:
             print 'Screenshot job complete. Saving files..'
-            _purge(_output_dir, '.diff', 'stale diff')
+            _purge(output_dir, '.diff', 'stale diff')
             for i in screenshots_json['screenshots']:
-                base_image = os.path.join(_output_dir, \
-                    _build_filename_from_browserstack_json(i))
-                if base_image: 
+                filename = _build_filename_from_browserstack_json(i)
+                base_image = os.path.join(output_dir, filename)
+                if filename:
                     _download_file(i['image_url'], base_image)
-                if os.path.isfile(base_image) and _phantomcss:
+                if phantomcss and os.path.isfile(base_image):
                     # slice the image. slicing on css selector could be better..
                     _long_image_slice(base_image, base_image, 300)
                     os.remove(base_image)
             print 'Done saving.'
             return True
-        except Exception, e:
+        except OSError, e:
             print e
             return False
     else:
@@ -189,9 +194,9 @@ def main(argv):
         if opt in ("-c", "--config"):
             config_file = arg
         if opt in ("-p", "--phantomcss"):
-            global _phantomcss, _output_dir
-            _phantomcss = True
-            _output_dir = OUTPUT_DIR_PHANTOMCSS
+            global phantomcss, output_dir
+            phantomcss = True
+            output_dir = OUTPUT_DIR_PHANTOMCSS
 
     auth = (api_user, api_token)
     config = _read_json(config_file) if config_file else None
@@ -201,8 +206,8 @@ def main(argv):
     job_id = generate_resp_json['job_id']
     print "started job id: {0}".format(job_id)
     if not retry_get_screenshots(s, job_id):
-        print """ Failed. The job was not complete at Browserstack after x attempts. 
-              You may need to increase the number of retry attempts """
+        print """ Failed. The job was not complete at Browserstack after x
+              attempts. You may need to increase the number of retry attempts """
 
 if __name__ == "__main__":
     main(sys.argv[1:])

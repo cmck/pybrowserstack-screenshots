@@ -1,12 +1,15 @@
+""" API Wrapper for Browserstack Screenshots """
+
 import os
 import requests
 
-try: 
+try:
     import simplejson as json
-except ImportError: 
+except ImportError:
     import json
 
 class Screenshots(object):
+    """ Browserstack Screenshots API Wrapper """
 
     DEFAULT_CONFIG = {
         "browsers":[
@@ -16,8 +19,8 @@ class Screenshots(object):
             "browser_version":"8.0",
             "browser":"ie"
         }
-    ],
-    "url":"http://google.com"
+        ],
+        "url":"http://google.com"
     }
 
     def __init__(self, **kwargs):
@@ -26,7 +29,7 @@ class Screenshots(object):
         """
         self.session = requests.Session()
         self.api_url = "http://www.browserstack.com/screenshots"
-        if kwargs.get('api_url'): 
+        if kwargs.get('api_url'):
             self.api_url = kwargs.get('api_url')
 
         self.config = self.DEFAULT_CONFIG
@@ -34,7 +37,7 @@ class Screenshots(object):
             self.config = kwargs.get('config')
 
         if kwargs.get('auth'):
-            if not (len(kwargs.get('auth')) == 2):
+            if not len(kwargs.get('auth')) == 2:
                 raise ImproperlyConfiguredException("Auth is a tuple of \
                     ('username', 'token')")
             self.auth = kwargs.get('auth')
@@ -48,7 +51,7 @@ class Screenshots(object):
         elif req.status_code == 403:
             raise ScreenshotNotAllowedError("Screenshot not allowed")
         elif req.status_code == 422:
-            raise InvalidRequestError(**simplejson.loads(req.content))
+            raise InvalidRequestError(**json.loads(req.content))
         elif req.status_code == 200:
             return req
         else:
@@ -97,12 +100,17 @@ class Screenshots(object):
         return resp.json() if resp.json()['state'] == 'done' else False
 
 
-class AuthenticationError(Exception): pass
+class AuthenticationError(Exception):
+    pass
 
-class ScreenshotNotAllowedError(Exception): pass
+class ScreenshotNotAllowedError(Exception):
+    pass
 
-class InvalidRequestError(Exception): pass
+class InvalidRequestError(Exception):
+    pass
 
-class UnexpectedError(Exception): pass
+class UnexpectedError(Exception):
+    pass
 
-class ImproperlyConfiguredException(Exception): pass
+class ImproperlyConfiguredException(Exception):
+    pass
