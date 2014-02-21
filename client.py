@@ -12,6 +12,7 @@ try:
 except ImportError:
     import json
 
+MAX_RETRIES = 20
 OUTPUT_DIR_PHANTOMCSS = './output-phantomcss'
 output_dir = './output'
 phantomcss = False
@@ -142,7 +143,7 @@ def retry(tries, delay=3, backoff=2):
         return f_retry
     return deco_retry
 
-@retry(20, 2, 2)
+@retry(MAX_RETRIES, 2, 2)
 def retry_get_screenshots(s, job_id):
     return get_screenshots(s, job_id)
 

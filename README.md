@@ -11,10 +11,16 @@ Tests for visual regressions using PhantomCSS.
 2. Create a config file for the device/os/browser combinations you wish to screenshot. See example_config/ for examples.
 3. Start the browserstack job and download baseline screenshots:
 ```bash
+python client.py --config <config_file>
+```
+
+### PhantomCSS (experimental)
+1. Download baseline screenshots:
+```bash
 python client.py --config <config_file> --phantomcss
 ```
-4. Run client.py a second time, this will produce the screenshots you want to test
-5. Test for visual regressions between the two sets: 
+2. Run client.py a second time to generate new screenshots
+3. Test for visual regressions between the two sets using PhantomCSS: 
 ```bash
 casperjs test comparator.js
 ```
