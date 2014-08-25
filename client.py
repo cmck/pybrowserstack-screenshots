@@ -207,7 +207,7 @@ def main(argv):
         print 'Usage:\n-a, --auth <username:password>\n-c, --config <config_file>\n-p, --phantomcss'
 
     try:
-        opts, args = getopt.getopt(argv, "a:c:p", ["config=", "phantomcss"])
+        opts, args = getopt.getopt(argv, "a:c:p", ["auth=", "config=", "phantomcss"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
