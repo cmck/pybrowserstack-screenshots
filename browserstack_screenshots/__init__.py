@@ -1,26 +1,29 @@
 """ API Wrapper for Browserstack Screenshots """
 
 import os
+
 import requests
+
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
+
 class Screenshots(object):
     """ Browserstack Screenshots API Wrapper """
 
     DEFAULT_CONFIG = {
-        "browsers":[
-        {
-            "os":"Windows",
-            "os_version":"7",
-            "browser_version":"8.0",
-            "browser":"ie"
-        }
+        "browsers": [
+            {
+                "os": "Windows",
+                "os_version": "7",
+                "browser_version": "8.0",
+                "browser": "ie"
+            }
         ],
-        "url":"http://google.com"
+        "url": "http://google.com"
     }
 
     def __init__(self, **kwargs):
@@ -79,7 +82,7 @@ class Screenshots(object):
         """
         headers = {'content-type': 'application/json', 'Accept': 'application/json'}
         resp = requests.post(self.api_url, data=json.dumps(self.config), \
-            headers=headers, auth=self.auth)
+                             headers=headers, auth=self.auth)
         resp = self._process_response(resp)
         return resp.json()
 
@@ -103,14 +106,18 @@ class Screenshots(object):
 class AuthenticationError(Exception):
     pass
 
+
 class ScreenshotNotAllowedError(Exception):
     pass
+
 
 class InvalidRequestError(Exception):
     pass
 
+
 class UnexpectedError(Exception):
     pass
+
 
 class ImproperlyConfiguredException(Exception):
     pass

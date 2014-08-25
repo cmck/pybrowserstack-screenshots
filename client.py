@@ -2,20 +2,33 @@
     they are complete. Optionally renames and slices images for use with
     PhantomCSS visual regression testing tool """
 
-import math, os, sys, time, re, getopt
+import math
+import os
+import sys
+import time
+import re
+import getopt
+import ConfigParser
+
 from PIL import Image
 import requests
+
 import browserstack_screenshots
+
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
-MAX_RETRIES = 20
-OUTPUT_DIR_PHANTOMCSS = './output-phantomcss'
-output_dir = './output'
+config = ConfigParser.ConfigParser()
+config.read('./main_config.properties')
+
+MAX_RETRIES = int(config.get('BROWSERSTACK', 'max_retries'))
+OUTPUT_DIR_PHANTOMCSS = config.get('OUTPUT', 'phantomscss_output')
+output_dir = config.get('OUTPUT', 'screenshots_output')
 phantomcss = False
+
 
 def _build_sliced_filepath(filename, slice_count):
     """ append slice_count to the end of a filename """
@@ -23,6 +36,7 @@ def _build_sliced_filepath(filename, slice_count):
     ext = os.path.splitext(filename)[1]
     new_filepath = ''.join((root, str(slice_count), ext))
     return _build_filepath_for_phantomcss(new_filepath)
+
 
 def _build_filepath_for_phantomcss(filepath):
     """ Prepare screenshot filename for use with phantomcss.
@@ -41,17 +55,19 @@ def _build_filepath_for_phantomcss(filepath):
     except OSError, e:
         print e
 
+
 def _build_filename_from_browserstack_json(j):
     """ Build a useful filename for an image from the screenshot json metadata """
     filename = ''
     device = j['device'] if j['device'] else 'Desktop'
     if j['state'] == 'done' and j['image_url']:
         detail = [device, j['os'], j['os_version'],
-                j['browser'], j['browser_version'], '.jpg']
+                  j['browser'], j['browser_version'], '.jpg']
         filename = '_'.join(item.replace(" ", "_") for item in detail if item)
     else:
         print 'screenshot timed out, ignoring this result'
     return filename
+
 
 def _long_image_slice(in_filepath, out_filepath, slice_size):
     """ Slice an image into parts slice_size tall. """
@@ -60,7 +76,7 @@ def _long_image_slice(in_filepath, out_filepath, slice_size):
     width, height = img.size
     upper = 0
     left = 0
-    slices = int(math.ceil(height/slice_size))
+    slices = int(math.ceil(height / slice_size))
 
     count = 1
     for slice in range(slices):
@@ -78,6 +94,7 @@ def _long_image_slice(in_filepath, out_filepath, slice_size):
         working_slice.save(new_filepath)
         count += 1
 
+
 def _read_json(path):
     try:
         with open(path) as f:
@@ -86,12 +103,14 @@ def _read_json(path):
         print e
         return {}
 
+
 def _mkdir(path):
     try:
         os.makedirs(path)
     except OSError, e:
         if e.errno != 17:
             raise
+
 
 def _download_file(uri, filename):
     try:
@@ -104,12 +123,14 @@ def _download_file(uri, filename):
     except IOError, e:
         print e
 
+
 def _purge(dir, pattern, reason=''):
     """ delete files in dir that match pattern """
     for f in os.listdir(dir):
         if re.search(pattern, f):
             print "Purging file {0}. {1}".format(f, reason)
             os.remove(os.path.join(dir, f))
+
 
 def retry(tries, delay=3, backoff=2):
     """Retries a function or method until it returns True."""
@@ -128,7 +149,7 @@ def retry(tries, delay=3, backoff=2):
         def f_retry(*args, **kwargs):
             mtries, mdelay = tries, delay
 
-            rv = f(*args, **kwargs) # first attempt
+            rv = f(*args, **kwargs)  # first attempt
             while mtries > 0:
                 if rv is True:
                     return True
@@ -137,15 +158,19 @@ def retry(tries, delay=3, backoff=2):
                 time.sleep(mdelay)
                 mdelay *= backoff
 
-                rv = f(*args, **kwargs) # Try again
+                rv = f(*args, **kwargs)  # Try again
             print str(tries) + " attempts. Abandoning."
-            return False # Ran out of tries
+            return False  # Ran out of tries
+
         return f_retry
+
     return deco_retry
+
 
 @retry(MAX_RETRIES, 2, 2)
 def retry_get_screenshots(s, job_id):
     return get_screenshots(s, job_id)
+
 
 def get_screenshots(s, job_id):
     screenshots_json = s.get_screenshots(job_id)
@@ -172,26 +197,26 @@ def get_screenshots(s, job_id):
         print "Screenshots job incomplete. Waiting before retry.."
         return False
 
+
 class ScreenshotIncompleteError(Exception):
     pass
 
+
 def main(argv):
-    api_user = ''
-    api_token = ''
-
-    """ Do not edit below this line """
-
     def usage():
-        print 'Usage:\n-c, --config <config_file>\n-p, --phantomcss'
+        print 'Usage:\n-a, --auth <username:password>\n-c, --config <config_file>\n-p, --phantomcss'
 
     try:
-        opts, args = getopt.getopt(argv, "c:p", ["config=", "phantomcss"])
+        opts, args = getopt.getopt(argv, "a:c:p", ["config=", "phantomcss"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
 
+    auth = None
     config_file = ''
     for opt, arg in opts:
+        if opt in ("-a", "--auth"):
+            auth = tuple(arg.split(':'))
         if opt in ("-c", "--config"):
             config_file = arg
         if opt in ("-p", "--phantomcss"):
@@ -199,16 +224,22 @@ def main(argv):
             phantomcss = True
             output_dir = OUTPUT_DIR_PHANTOMCSS
 
-    auth = (api_user, api_token)
+    if auth is None:
+        global config
+        api_user = config.get('BROWSERSTACK', 'bs_username')
+        api_token = config.get('BROWSERSTACK', 'bs_api_key')
+        auth = (api_user, api_token)
+
     config = _read_json(config_file) if config_file else None
     print 'using config {0}'.format(config_file)
     s = browserstack_screenshots.Screenshots(auth=auth, config=config)
     generate_resp_json = s.generate_screenshots()
     job_id = generate_resp_json['job_id']
-    print "started job id: {0}".format(job_id)
+    print "BrowserStack url http://www.browserstack.com/screenshots/{0}".format(job_id)
     if not retry_get_screenshots(s, job_id):
         print """ Failed. The job was not complete at Browserstack after x
               attempts. You may need to increase the number of retry attempts """
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
