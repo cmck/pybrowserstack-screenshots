@@ -11,8 +11,10 @@ Tests for visual regressions using PhantomCSS.
 2. Create a config file for the device/os/browser combinations you wish to screenshot. See example_config/ for examples.
 3. Start the browserstack job and download baseline screenshots:
 ```bash
-python client.py --config <config_file>
+python client.py --config <config_file> --auth <username:token>
 ```
+
+Note that "auth" attribute (browserstack username and token) is optional. When not specified, values will be taken from "main_config.properties" where all configuration variables are stored.
 
 ### PhantomCSS (experimental)
 1. Download baseline screenshots:
@@ -27,6 +29,7 @@ casperjs test comparator.js
 
 ### client.py params
 ```bash
+-a, --auth <username:token>
 -c, --config <config_file>
 -p, --phantomcss
 ```
