@@ -180,7 +180,8 @@ def get_screenshots(s, job_id, res_dir=None):
             _mkdir(output_dir)
         else:
             new_direcory = os.path.join(output_dir, res_dir)
-            _mkdir(new_direcory)
+            output_dir=new_direcory
+            _mkdir(output_dir)
         try:
             print 'Screenshot job complete. Saving files..'
             _purge(output_dir, '.diff', 'stale diff')
