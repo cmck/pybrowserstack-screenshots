@@ -176,17 +176,14 @@ def get_screenshots(s, job_id, result_dir):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
         # add new parameter to create screenshots in directory equal to filename config
-        global output_dir
-        print ("Directory from comfig file %s" %output_dir)
         new_directory = os.path.join(output_dir, result_dir)
-        output_dir=new_directory
-        _mkdir(output_dir)
+        _mkdir(new_directory)
         try:
-            print ('Screenshot job complete. Saving files in %s'% output_dir)
-            _purge(output_dir, '.diff', 'stale diff')
+            print ('Screenshot job complete. Saving files in %s'% new_directory)
+            _purge(new_directory, '.diff', 'stale diff')
             for i in screenshots_json['screenshots']:
                 filename = _build_filename_from_browserstack_json(i)
-                base_image = os.path.join(output_dir, filename)
+                base_image = os.path.join(new_directory, filename)
                 if filename:
                     _download_file(i['image_url'], base_image)
                 if phantomcss and os.path.isfile(base_image):
