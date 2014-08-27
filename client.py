@@ -175,9 +175,10 @@ def retry_get_screenshots(s, job_id, result_dir):
 def get_screenshots(s, job_id, result_dir):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
-        # add new parameter to create screenshots in directory equal to filename config 
-        new_direcory = os.path.join(output_dir, result_dir)
-        output_dir=new_direcory
+        # add new parameter to create screenshots in directory equal to filename config
+        print ("Directory from comfig file %s" %output_dir)
+        new_directory = os.path.join(output_dir, result_dir)
+        output_dir=new_directory
         _mkdir(output_dir)
         try:
             print ('Screenshot job complete. Saving files in %s'% output_dir)
