@@ -168,14 +168,19 @@ def retry(tries, delay=3, backoff=2):
 
 
 @retry(MAX_RETRIES, 2, 2)
-def retry_get_screenshots(s, job_id):
-    return get_screenshots(s, job_id)
+def retry_get_screenshots(s, job_id, res_dir=None):
+    return get_screenshots(s, job_id, res_dir=None)
 
 
-def get_screenshots(s, job_id):
+def get_screenshots(s, job_id, res_dir=None):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
-        _mkdir(output_dir)
+        # add new parameter to create screenshots in directory equal to filename config 
+        if res_dir is None:
+            _mkdir(output_dir)
+        else:
+            new_direcory = os.path.join(output_dir, res_dir)
+            _mkdir(new_direcory)
         try:
             print 'Screenshot job complete. Saving files..'
             _purge(output_dir, '.diff', 'stale diff')
@@ -200,7 +205,6 @@ def get_screenshots(s, job_id):
 
 class ScreenshotIncompleteError(Exception):
     pass
-
 
 def main(argv):
     def usage():
@@ -232,11 +236,14 @@ def main(argv):
 
     config = _read_json(config_file) if config_file else None
     print 'using config {0}'.format(config_file)
+    # get config filename, after removing .json - create new result directory for this config 
+    path, filename=os.path.split(config_file)
+    res_dir=filename.split(".")[0]
     s = browserstack_screenshots.Screenshots(auth=auth, config=config)
     generate_resp_json = s.generate_screenshots()
     job_id = generate_resp_json['job_id']
     print "BrowserStack url http://www.browserstack.com/screenshots/{0}".format(job_id)
-    if not retry_get_screenshots(s, job_id):
+    if not retry_get_screenshots(s, job_id, res_dir):
         print """ Failed. The job was not complete at Browserstack after x
               attempts. You may need to increase the number of retry attempts """
 
