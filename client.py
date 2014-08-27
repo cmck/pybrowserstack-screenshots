@@ -181,9 +181,10 @@ def get_screenshots(s, job_id, res_dir=None):
         else:
             new_direcory = os.path.join(output_dir, res_dir)
             output_dir=new_direcory
+            
             _mkdir(output_dir)
         try:
-            print 'Screenshot job complete. Saving files..'
+            print ('Screenshot job complete. Saving files in %s'% output_dir)
             _purge(output_dir, '.diff', 'stale diff')
             for i in screenshots_json['screenshots']:
                 filename = _build_filename_from_browserstack_json(i)
