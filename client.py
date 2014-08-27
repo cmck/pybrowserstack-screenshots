@@ -168,18 +168,18 @@ def retry(tries, delay=3, backoff=2):
 
 
 @retry(MAX_RETRIES, 2, 2)
-def retry_get_screenshots(s, job_id, result_dir=None):
-    return get_screenshots(s, job_id, result_dir=None)
+def retry_get_screenshots(s, job_id, result_dir):
+    return get_screenshots(s, job_id, result_dir)
 
 
 def get_screenshots(s, job_id, result_dir = None):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
         # add new parameter to create screenshots in directory equal to filename config 
-        if res_dir is None:
+        if result_dir is None:
             _mkdir(output_dir)
         else:
-            new_direcory = os.path.join(output_dir, res_dir)
+            new_direcory = os.path.join(output_dir, result_dir)
             output_dir=new_direcory
             
             _mkdir(output_dir)
@@ -240,12 +240,12 @@ def main(argv):
     print 'using config {0}'.format(config_file)
     # get config filename, after removing .json - create new result directory for this config 
     path, filename=os.path.split(config_file)
-    res_dir=filename.split(".")[0]
+    result_dir=filename.split(".")[0]
     s = browserstack_screenshots.Screenshots(auth=auth, config=config)
     generate_resp_json = s.generate_screenshots()
     job_id = generate_resp_json['job_id']
     print "BrowserStack url http://www.browserstack.com/screenshots/{0}".format(job_id)
-    if not retry_get_screenshots(s, job_id, result_dir=res_dir):
+    if not retry_get_screenshots(s, job_id, result_dir):
         print """ Failed. The job was not complete at Browserstack after x
               attempts. You may need to increase the number of retry attempts """
 
