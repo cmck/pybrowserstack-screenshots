@@ -172,17 +172,13 @@ def retry_get_screenshots(s, job_id, result_dir):
     return get_screenshots(s, job_id, result_dir)
 
 
-def get_screenshots(s, job_id, result_dir = None):
+def get_screenshots(s, job_id, result_dir):
     screenshots_json = s.get_screenshots(job_id)
     if screenshots_json:
         # add new parameter to create screenshots in directory equal to filename config 
-        if result_dir is None:
-            _mkdir(output_dir)
-        else:
-            new_direcory = os.path.join(output_dir, result_dir)
-            output_dir=new_direcory
-            
-            _mkdir(output_dir)
+        new_direcory = os.path.join(output_dir, result_dir)
+        output_dir=new_direcory
+        _mkdir(output_dir)
         try:
             print ('Screenshot job complete. Saving files in %s'% output_dir)
             _purge(output_dir, '.diff', 'stale diff')
