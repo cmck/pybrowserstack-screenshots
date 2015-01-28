@@ -7,9 +7,8 @@ Tests for visual regressions using PhantomCSS.
 
 ### Usage
 
-1. Edit client.py and enter your Browserstack username and API token
-2. Create a config file for the device/os/browser combinations you wish to screenshot. See example_config/ for examples.
-3. Start the browserstack job and download baseline screenshots:
+1. Create a config file for the device/os/browser combinations you wish to screenshot. See example_config/ for examples.
+2. Start the browserstack job and download baseline screenshots:
 ```bash
 python client.py --config <config_file> --auth <username:token>
 ```
@@ -35,7 +34,11 @@ casperjs test comparator.js
 ```
 
 ### other requirements
-comparator.js requires casperjs
+comparator.js requires casperjs: http://casperjs.readthedocs.org/en/latest/
+If not initialised, the submodule PhantomCSS can be initialised with 
+```bash
+git submodule update --init --recursive
+```
 
 For more information see http://www.browserstack.com/screenshots/api
 
