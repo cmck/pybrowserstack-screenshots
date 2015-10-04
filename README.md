@@ -7,8 +7,7 @@ Tests for visual regressions using PhantomCSS.
 
 ### Installation
 
-1. Clone the repository
-2. ``sudo python setup.py install``
+1. pip install pybrowserstack-screenshots
 
 ### Usage
 

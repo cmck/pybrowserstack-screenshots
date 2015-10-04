@@ -10,6 +10,7 @@ setup(
       author='Clark Mckenzie',
       author_email='clarkmckenzie@googlemail.com',
       url='http://github.com/cmck/pybrowserstack-screenshots',
+      download_url='https://github.com/cmck/pybrowserstack-screenshots/tarball/0.1',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
@@ -19,4 +20,4 @@ setup(
             "requests>=2.2.0",
             "Pillow>=2.3.0",
       ],
-      )
+)
