@@ -5,6 +5,8 @@ python api wrapper and client for Browserstack Screenshots API including [Phanto
 Starts screenshot jobs at Browserstack and downloads the screenshots when they are complete.
 Tests for visual regressions using PhantomCSS.
 
+Note, you must have Screenshot API access enabled on your account.
+
 ### Installation
 
 1. pip install pybrowserstack-screenshots

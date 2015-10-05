@@ -54,7 +54,7 @@ class Screenshots(object):
         elif req.status_code == 403:
             raise ScreenshotNotAllowedError("Screenshot not allowed")
         elif req.status_code == 422:
-            raise InvalidRequestError(**json.loads(req.content))
+            raise InvalidRequestError(json.loads(req.content))
         elif req.status_code == 200:
             return req
         else:
